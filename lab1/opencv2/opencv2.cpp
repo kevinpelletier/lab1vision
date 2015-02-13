@@ -1,6 +1,3 @@
-// OpenCVDefault.cpp : définit le point d'entrée pour l'application console.
-//
-
 #include "stdafx.h"
 #include "device_launch_parameters.h"
 #include <opencv2/core/core.hpp>
@@ -8,37 +5,33 @@
 #include <opencv2/imgproc/types_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
-#include <string>     // std::string, std::to_string
+#include <string> 
 
 using namespace std;
 using namespace cv;
+
 #define ENTER  13
 #define R 114
 #define ESPACE 32
 #define TAB 9
 #define M 109
 
-//Donnee image
 Mat matrice;
 Mat matrice_PositionSouris;
 
-//Couleur des pixel
 Scalar CouleurPipette;
 Scalar CouleurPixelEnCours;
 
-//Position Souris
+//Les variables commencent par une minuscule
 int MouseX;
 int MouseY;
 char PositionColorSouris[500];
 
-//affiche text
 char TexteSouris[100];
 char TexteCouleur[100];
 
-//Camera
 bool ModeCamera = true;
 
-//7,8,10) Capteur de la souris
 void CallBackFunc(int event, int x, int y, int flags,void *userdata)
 {
 	MouseX = x;
@@ -46,13 +39,11 @@ void CallBackFunc(int event, int x, int y, int flags,void *userdata)
 
 	if(event == EVENT_LBUTTONDOWN)
 	{
-		//7) MÉMORISER LA COULEUR DE LA SOURIS
 		CouleurPipette = CouleurPixelEnCours;
-		//cout << "Left button of the mouse is clicked - position(" << x << "," << y  << ")" << endl;
 	}
 	else if(event == EVENT_RBUTTONDOWN)
 	{
-		//8) DESSINER UNE CROIX AVEC LA PIPETTE
+		//Extraire dans une fonction privée DessinerCroix() ?
 		int CrossSize = 20;
 		
 		//Ligne horizontal
@@ -67,6 +58,7 @@ void CallBackFunc(int event, int x, int y, int flags,void *userdata)
 		line(matrice,P3,P4,CouleurPipette);
 		
 		ModeCamera = false;
+		//Extraire la string dans une constante
 		imwrite("ImageEnCours.png",matrice);
 		
 		//cout << "Right button of the mouse is clicked - position(" << x << "," << y  << ")" << endl;
@@ -76,11 +68,12 @@ void CallBackFunc(int event, int x, int y, int flags,void *userdata)
 		//cout << " Mouse over this position(" << x << "," << y  << ")" << endl;
 
 		Scalar Color(
-			matrice.at<cv::Vec3b>(MouseY,MouseX)[0],
-			matrice.at<cv::Vec3b>(MouseY,MouseX)[1],
-			matrice.at<cv::Vec3b>(MouseY,MouseX)[2],
+			matrice.at<Vec3b>(MouseY,MouseX)[0],
+			matrice.at<Vec3b>(MouseY,MouseX)[1],
+			matrice.at<Vec3b>(MouseY,MouseX)[2],
 			255
 			);
+		//Il faut se brancher : Français ou Anglais?
 		CouleurPixelEnCours = Color;
 	}
 }
@@ -89,6 +82,7 @@ void CallBackFunc(int event, int x, int y, int flags,void *userdata)
 void PrendrePhoto(Mat matrice, bool &ModeCamera)
 {
 	imwrite("ImageEnCours.png",matrice);
+	//Préférer une valeur de retour plutôt qu'une modification de variable
 	ModeCamera = false;
 }
 
@@ -122,8 +116,6 @@ int main(int argc, char** argv)
 	bool Loop = true;
 
 	//1) LOADER UNE SIMPLE IMAGE
-	//matrice = imread("breadfish.png",CV_LOAD_IMAGE_COLOR);
-	//imshow("LoadSimpleImage",matrice);
 
 	while(Loop)
 	{
@@ -198,7 +190,7 @@ int main(int argc, char** argv)
 		{
 			//6) MODE MENU CONSOLE
 			string texteEntrer;
-			cout << "Nom de l'image a charger? ";
+			cout << "Nom de l'image à charger? ";
 			getline(cin,texteEntrer);
 			matrice = imread(texteEntrer, CV_LOAD_IMAGE_COLOR);
 			imwrite("ImageEnCours.png",matrice);
